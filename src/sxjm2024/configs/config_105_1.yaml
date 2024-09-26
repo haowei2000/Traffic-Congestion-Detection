@@ -1,0 +1,11 @@
+distance: 30
+port: 105
+id_label_path: results/id_label_105_1.csv
+input_video_path: video/transport/32.31.250.105/20240501_20240501130415_20240501141554_130415.mp4
+json_path: results/105_1.json
+list_pts_blue:  [[25, 185], [40, 230], [340, 145], [225, 145]]
+list_pts_green:  [[430, 480], [175, 340], [430,150], [490, 150]]
+list_pts_yellow: [[140, 330], [50, 240], [355, 150], [420, 150]]
+offset: 0.7
+floor: 30S
+time_series: results/30S/time_series_105_1.csv

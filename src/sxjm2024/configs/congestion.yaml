@@ -1,0 +1,4 @@
+k_max: 2.5
+v_max: 2
+q_threshold: 0.5
+v_threshold: 0.5
