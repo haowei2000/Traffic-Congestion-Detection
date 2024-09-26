@@ -1,8 +1,8 @@
 import os
 
 import numpy as np
-import sxjm2024.detect.tracker as tracker
-from sxjm2024.detect.detector import Detector
+import traffic.detect.tracker as tracker
+from traffic.detect.detector import Detector
 import cv2
 import json
 import yaml

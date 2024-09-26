@@ -2,8 +2,8 @@ import cv2
 import torch
 import numpy as np
 
-from sxjm2024.detect.deep_sort.utils.parser import get_config
-from sxjm2024.detect.deep_sort.deep_sort import DeepSort
+from traffic.detect.deep_sort.utils.parser import get_config
+from traffic.detect.deep_sort.deep_sort import DeepSort
 
 def draw_bboxes(image, bboxes, line_thickness):
     line_thickness = line_thickness or round(
