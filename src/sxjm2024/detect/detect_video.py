@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import sxjm2024.detect.tracker as tracker
 from sxjm2024.detect.detector import Detector
@@ -6,7 +8,7 @@ import json
 import yaml
 import pandas as pd
 from tqdm import tqdm
-
+print(os.getcwd())
 
 def load_config(config_path):
     with open(config_path, "r") as file:
@@ -59,9 +61,10 @@ def remove_left_ids(set_ids_in_frame, lane_sets):
 
 
 def write_data_to_file(f, capture, lane_sets):
+    current_frame_number = int(capture.get(cv2.CAP_PROP_POS_FRAMES))
     data_to_write = {
         "lane_data": [
-            {"current_frame_number": capture.get(cv2.CAP_PROP_POS_FRAMES)},
+            {"current_frame_number": current_frame_number},
             {
                 "lane_id": 1,
                 "current_ids": list(lane_sets["current_lane1"]),
@@ -85,6 +88,7 @@ def write_data_to_file(f, capture, lane_sets):
             },
         ]
     }
+    print(data_to_write)
     f.write(json.dumps(data_to_write) + "\n")
 
 
@@ -175,4 +179,4 @@ def detect_video(config_path):
 
 
 if __name__=='__main__':
-    detect_video('src/sxjm2024/configs/config_103_0.yaml')
+    detect_video('')
