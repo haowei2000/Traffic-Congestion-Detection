@@ -34,7 +34,7 @@ def calculate_one_congestion(
     return total_weighted_congestion / total_weighted_q
 
 
-def apply_caculate_congetstion(
+def apply_calculate_congestion(
     df, port, k_max, v_max, q_threshold, v_threshold
 ):
     df["overall_congestion"] = df.apply(
@@ -63,7 +63,7 @@ if __name__ == "__main__":
                 config = yaml.safe_load(file)
             path = config["time_series"]
             df = pd.read_csv(path)
-            df = apply_caculate_congetstion(
+            df = apply_calculate_congestion(
                 df=df.copy(), port=port, **congestion_config
             )
             df.to_csv(path, index=False)

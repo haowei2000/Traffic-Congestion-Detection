@@ -72,11 +72,11 @@ def filter_label(df, id_to_label, label):
     return df
 
 
-def assign_timestamps(df, start_time, sec1frame, setAccuracy="30S"):
+def assign_timestamps(df, start_time, sec1frame, set_accuracy="30S"):
     df["timestamp"] = [
         start_time + timedelta(seconds=i * sec1frame) for i in range(len(df))
     ]
-    df["timestamp"] = pd.to_datetime(df["timestamp"]).dt.floor(setAccuracy)
+    df["timestamp"] = pd.to_datetime(df["timestamp"]).dt.floor(set_accuracy)
     df["timestamp"] = df["timestamp"].dt.strftime("%Y-%m-%d %H:%M:%S")
     return df
 
@@ -165,7 +165,7 @@ def process_lane(df, frames, config, id_to_label, lane_index):
     return results
 
 
-def calculate(config):
+def get_traffic_infos(config):
     frames, lane0, lane1, lane2, lane3 = read_json(config["json_path"])
 
     # 读取 id_label_path 文件并检查列名

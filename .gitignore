@@ -1,3 +1,4 @@
 video
 src/__pycache__
 src/analysis/__pycache__
+src/results/detect_result

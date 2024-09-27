@@ -4,5 +4,6 @@
     "python.analysis.extraPaths": [
         "./src/traffic/detect",
         "./src/traffic/detect/models"
-    ]
+    ],
+    "editor.stickyScroll.maxLineCount": 20
 }
