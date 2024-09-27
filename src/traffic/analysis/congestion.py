@@ -35,9 +35,10 @@ def calculate_one_congestion(
 
 
 def apply_calculate_congestion(
-    df, port, k_max, v_max, q_threshold, v_threshold
+    info_df, port, k_max, v_max, q_threshold, v_threshold
 ):
-    df["overall_congestion"] = df.apply(
+    congestion_df=info_df.copy()
+    congestion_df["overall_congestion"] = congestion_df.apply(
         lambda record: calculate_one_congestion(
             data=record,
             k_max=k_max,
@@ -47,8 +48,8 @@ def apply_calculate_congestion(
         ),
         axis=1,
     )
-    df["item_id"] = port
-    return df
+    congestion_df["item_id"] = port
+    return congestion_df
 
 
 if __name__ == "__main__":
@@ -64,7 +65,7 @@ if __name__ == "__main__":
             path = config["time_series"]
             df = pd.read_csv(path)
             df = apply_calculate_congestion(
-                df=df.copy(), port=port, **congestion_config
+                congestion_df=df.copy(), port=port, **congestion_config
             )
             df.to_csv(path, index=False)
             all_data.append(df)
@@ -79,3 +80,4 @@ if __name__ == "__main__":
     ]  # 删除'Unnamed: 0'列
     combined_data = combined_data.sort_values(by="timestamp")
     combined_data.to_csv("results/combined_data2.csv", index=False)
+
