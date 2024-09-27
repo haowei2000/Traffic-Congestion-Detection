@@ -2,7 +2,8 @@ distance: 30
 port: 103
 id_label_path: results/id_label_103_0.csv
 input_video_path: video/transport/32.31.250.103/20240501_20240501125647_20240501140806_125649.mp4
-json_path: "results/103_0.json"
+output_video_path: video/output/103_0.mp4
+json_path: results/103_0.json
 list_pts_blue: [[25, 200], [50, 250], [365, 150], [260, 150]]
 list_pts_yellow: [[185, 366], [60, 260], [370, 150], [485, 150]]
 list_pts_green: [[500, 520], [200, 370], [495, 150], [585, 150]]

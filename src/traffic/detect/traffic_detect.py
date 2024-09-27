@@ -1,17 +1,10 @@
 import numpy as np
 import cv2
 import json
-import yaml
 import pandas as pd
 from tqdm import tqdm
-from pathlib import Path
-import tracker
-from detector import Detector
-
-
-def load_config(config_path):
-    with open(config_path, "r") as file:
-        return yaml.safe_load(file)
+import traffic.detect.tracker as tracker
+from traffic.detect.detector import Detector
 
 
 def create_mask_image(config):
@@ -110,8 +103,7 @@ def draw_text_on_frame(
     )
 
 
-def detect_video(config_path):
-    config = load_config(config_path)
+def detect_video(config):
     polygon_mask = create_mask_image(config)
     color_polygons_image = create_color_polygons_image(config)
 
@@ -125,64 +117,77 @@ def detect_video(config_path):
     }
 
     font_draw_number = cv2.FONT_HERSHEY_SIMPLEX
-    draw_text_postion = (int(960 * 0.01), int(540 * 0.05))
+    draw_text_position = (int(960 * 0.01), int(540 * 0.05))
 
     detector = Detector()
     capture = cv2.VideoCapture(config["input_video_path"])
-    f = open(config["json_path"], "w", encoding="utf-8")
-    id_label_dict = {}
-    total_frames = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    for _ in tqdm(range(total_frames), desc="Processing frames"):
-        _, im = capture.read()
-        if im is None:
-            break
-        im = cv2.resize(im, (960, 540))
-        bboxes = detector.detect(im)
+    with open(config["json_path"], "w", encoding="utf-8") as f:
+        id_label_dict = {}
+        total_frames = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        if bboxes:
-            list_bboxs = tracker.update(bboxes, im)
-            output_image_frame = tracker.draw_bboxes(
-                im, list_bboxs, line_thickness=None
-            )
-        else:
-            output_image_frame = im
+        for _ in tqdm(range(total_frames), desc="Processing frames"):
+            _, im = capture.read()
+            if im is None:
+                break
+            im = cv2.resize(im, (960, 540))
+            bboxes = detector.detect(im)
 
-        output_image_frame = cv2.addWeighted(
-            output_image_frame, 1, color_polygons_image, 0.5, 0
-        )
-        set_ids_in_frame = set()
-
-        if bboxes:
-            for item_bbox in list_bboxs:
-                x1, y1, x2, y2, label, track_id = item_bbox
-                id_label_dict[track_id] = label
-                x_center = int(x1 + (x2 - x1) * config["offset"])
-                y_center = y2
-                cv2.circle(
-                    output_image_frame,
-                    (x_center, y_center),
-                    5,
-                    (0, 0, 255),
-                    -1,
+            if bboxes:
+                list_bboxs = tracker.update(bboxes, im)
+                output_image_frame = tracker.draw_bboxes(
+                    im, list_bboxs, line_thickness=None
                 )
-                x_center = max(0, min(x_center, polygon_mask.shape[1] - 1))
-                y_center = max(0, min(y_center, polygon_mask.shape[0] - 1))
-                value = polygon_mask[y_center, x_center, 0]
-                set_ids_in_frame.add(track_id)
-                update_lane_sets(track_id, value, lane_sets)
+            else:
+                output_image_frame = im
 
-            remove_left_ids(set_ids_in_frame, lane_sets)
-            write_data_to_file(f, capture, lane_sets)
-        else:
-            lane_sets["current_lane1"].clear()
-            lane_sets["current_lane2"].clear()
-            lane_sets["current_lane3"].clear()
+            output_image_frame = cv2.addWeighted(
+                output_image_frame, 1, color_polygons_image, 0.5, 0
+            )
+            set_ids_in_frame = set()
 
-        output_image_frame = draw_text_on_frame(
-            output_image_frame, lane_sets, draw_text_postion, font_draw_number
-        )
-        cv2.waitKey(1)
+            if bboxes:
+                for item_bbox in list_bboxs:
+                    x1, y1, x2, y2, label, track_id = item_bbox
+                    id_label_dict[track_id] = label
+                    x_center = int(x1 + (x2 - x1) * config["offset"])
+                    y_center = y2
+                    cv2.circle(
+                        output_image_frame,
+                        (x_center, y_center),
+                        5,
+                        (0, 0, 255),
+                        -1,
+                    )
+                    x_center = max(0, min(x_center, polygon_mask.shape[1] - 1))
+                    y_center = max(0, min(y_center, polygon_mask.shape[0] - 1))
+                    value = polygon_mask[y_center, x_center, 0]
+                    set_ids_in_frame.add(track_id)
+                    update_lane_sets(track_id, value, lane_sets)
+
+                remove_left_ids(set_ids_in_frame, lane_sets)
+                write_data_to_file(f, capture, lane_sets)
+            else:
+                lane_sets["current_lane1"].clear()
+                lane_sets["current_lane2"].clear()
+                lane_sets["current_lane3"].clear()
+
+            output_image_frame = draw_text_on_frame(
+                output_image_frame,
+                lane_sets,
+                draw_text_position,
+                font_draw_number,
+            )
+            cv2.waitKey(1)
+            if config.get("output_video_path"):
+                if "video_writer" not in locals():
+                    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+                    video_writer = cv2.VideoWriter(
+                        config["output_video_path"], fourcc, 30, (960, 540)
+                    )
+                video_writer.write(output_image_frame)
+            else:
+                print("No output video path provided")
 
     id_label_df = pd.DataFrame(
         list(id_label_dict.items()), columns=["track_id", "label"]
@@ -191,10 +196,3 @@ def detect_video(config_path):
     capture.release()
     cv2.destroyAllWindows()
     return id_label_df
-
-
-if __name__ == "__main__":
-    script_path = Path(__file__).resolve()
-    # 获取项目的根目录
-    root_path = script_path  # 假设脚本位于项目的二级目录下
-    print(script_path)

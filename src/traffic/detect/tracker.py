@@ -5,6 +5,7 @@ import numpy as np
 from traffic.detect.deep_sort.utils.parser import get_config
 from traffic.detect.deep_sort.deep_sort import DeepSort
 
+
 def draw_bboxes(image, bboxes, line_thickness):
     line_thickness = line_thickness or round(
         0.002 * (image.shape[0] + image.shape[1]) * 0.5) + 1
@@ -45,7 +46,7 @@ def draw_bboxes(image, bboxes, line_thickness):
 
 def update(bboxes, image):
     cfg = get_config()
-    cfg.merge_from_file("src/sxjm2024/detect/deep_sort/configs/deep_sort.yaml")
+    cfg.merge_from_file("traffic/detect/deep_sort/configs/deep_sort.yaml")
     deepsort = DeepSort(cfg.DEEPSORT.REID_CKPT,
                         max_dist=cfg.DEEPSORT.MAX_DIST, min_confidence=cfg.DEEPSORT.MIN_CONFIDENCE,
                         nms_max_overlap=cfg.DEEPSORT.NMS_MAX_OVERLAP, max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,

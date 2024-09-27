@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Wang Haowei <hw_wang@whu.edu.cn>"]
 readme = "README.md"
-packages = [{include = "sxjm2024", from = "src"}]
+packages = [{include = "traffic", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -27,3 +27,9 @@ easydict = "*"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+detect = "cmd_line:main"
+
+[tool.ruff]
+line-length = 79

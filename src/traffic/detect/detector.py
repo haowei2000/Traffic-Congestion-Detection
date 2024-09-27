@@ -1,10 +1,10 @@
 import torch
 import numpy as np
 
-from traffic.detect.models.experimental import attempt_load
-from traffic.detect.utils.datasets import letterbox
-from traffic.detect.utils.general import non_max_suppression, scale_coords
-from traffic.detect.utils.torch_utils import select_device
+from models.experimental import attempt_load
+from utils.datasets import letterbox
+from utils.general import non_max_suppression, scale_coords
+from utils.torch_utils import select_device
 
 
 class Detector:
@@ -20,7 +20,7 @@ class Detector:
         # 选择设备（GPU或CPU）
         self.device = '0' if torch.cuda.is_available() else 'cpu'
         self.device = select_device(self.device)
-        
+
         # 加载模型
         model = attempt_load(self.weights, map_location=self.device)
         model.to(self.device).eval()

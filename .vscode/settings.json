@@ -1,0 +1,8 @@
+{
+    "python.terminal.executeInFileDir": true,
+    "code-runner.fileDirectoryAsCwd": true,
+    "python.analysis.extraPaths": [
+        "./src/traffic/detect",
+        "./src/traffic/detect/models"
+    ]
+}
