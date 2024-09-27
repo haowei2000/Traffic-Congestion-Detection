@@ -1,14 +1,13 @@
-import os
-
 import numpy as np
-import traffic.detect.tracker as tracker
-from traffic.detect.detector import Detector
 import cv2
 import json
 import yaml
 import pandas as pd
 from tqdm import tqdm
-print(os.getcwd())
+from pathlib import Path
+import tracker
+from detector import Detector
+
 
 def load_config(config_path):
     with open(config_path, "r") as file:
@@ -92,7 +91,9 @@ def write_data_to_file(f, capture, lane_sets):
     f.write(json.dumps(data_to_write) + "\n")
 
 
-def draw_text_on_frame(output_image_frame, lane_sets, draw_text_postion, font_draw_number):
+def draw_text_on_frame(
+    output_image_frame, lane_sets, draw_text_postion, font_draw_number
+):
     text_draw = (
         f"Lane 1: Current {len(lane_sets['current_lane1'])}, Total {len(lane_sets['total_lane1'])} | "
         f"Lane 2: Current {len(lane_sets['current_lane2'])}, Total {len(lane_sets['total_lane2'])} | "
@@ -141,11 +142,15 @@ def detect_video(config_path):
 
         if bboxes:
             list_bboxs = tracker.update(bboxes, im)
-            output_image_frame = tracker.draw_bboxes(im, list_bboxs, line_thickness=None)
+            output_image_frame = tracker.draw_bboxes(
+                im, list_bboxs, line_thickness=None
+            )
         else:
             output_image_frame = im
 
-        output_image_frame = cv2.addWeighted(output_image_frame, 1, color_polygons_image, 0.5, 0)
+        output_image_frame = cv2.addWeighted(
+            output_image_frame, 1, color_polygons_image, 0.5, 0
+        )
         set_ids_in_frame = set()
 
         if bboxes:
@@ -154,7 +159,13 @@ def detect_video(config_path):
                 id_label_dict[track_id] = label
                 x_center = int(x1 + (x2 - x1) * config["offset"])
                 y_center = y2
-                cv2.circle(output_image_frame, (x_center, y_center), 5, (0, 0, 255), -1)
+                cv2.circle(
+                    output_image_frame,
+                    (x_center, y_center),
+                    5,
+                    (0, 0, 255),
+                    -1,
+                )
                 x_center = max(0, min(x_center, polygon_mask.shape[1] - 1))
                 y_center = max(0, min(y_center, polygon_mask.shape[0] - 1))
                 value = polygon_mask[y_center, x_center, 0]
@@ -168,15 +179,22 @@ def detect_video(config_path):
             lane_sets["current_lane2"].clear()
             lane_sets["current_lane3"].clear()
 
-        output_image_frame = draw_text_on_frame(output_image_frame, lane_sets, draw_text_postion, font_draw_number)
+        output_image_frame = draw_text_on_frame(
+            output_image_frame, lane_sets, draw_text_postion, font_draw_number
+        )
         cv2.waitKey(1)
 
-    id_label_df = pd.DataFrame(list(id_label_dict.items()), columns=["track_id", "label"])
+    id_label_df = pd.DataFrame(
+        list(id_label_dict.items()), columns=["track_id", "label"]
+    )
     id_label_df.to_csv(config["id_label_path"], index=False)
     capture.release()
     cv2.destroyAllWindows()
     return id_label_df
 
 
-if __name__=='__main__':
-    detect_video('')
+if __name__ == "__main__":
+    script_path = Path(__file__).resolve()
+    # 获取项目的根目录
+    root_path = script_path  # 假设脚本位于项目的二级目录下
+    print(script_path)
