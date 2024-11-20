@@ -1,9 +1,19 @@
-from pathlib import Path
-import pandas as pd
+"""
+traffic_info.py
+Description: This module is used to calculate the QKV value of a vehicle in order to assess the flow, 
+density and speed of the vehicle. The formula is as follows: 
+Q=K⋅V
+"""
+
 from datetime import datetime, timedelta
+from pathlib import Path
+
 import jsonlines
+import pandas as pd
 from joblib import Parallel, delayed
+
 from traffic.my_path import results_dir
+
 
 def parse_time_precision(time_str):
     # 获取最后一个字符作为时间单位
@@ -108,7 +118,7 @@ def score_qkv(df, frames, video_path, distance, floor):
     return merged_df
 
 
-def read_json(json_path:Path):
+def read_json(json_path: Path):
     if json_path.is_file():
         print(f"Reading {json_path}")
     else:
@@ -171,10 +181,12 @@ def process_lane(df, frames, config, id_to_label, lane_index):
 
 
 def get_traffic_infos(config):
-    frames, lane0, lane1, lane2, lane3 = read_json(results_dir/config["json_path"])
-    print(frames,lane0)
+    frames, lane0, lane1, lane2, lane3 = read_json(
+        results_dir / config["json_path"]
+    )
+    print(frames, lane0)
     # 读取 id_label_path 文件并检查列名
-    id_label_df = pd.read_csv(results_dir/config["id_label_path"])
+    id_label_df = pd.read_csv(results_dir / config["id_label_path"])
     id_label_df.columns = ["id", "label"]
     id_to_label = id_label_df.set_index("id").to_dict()["label"]
     results = Parallel(n_jobs=4)(
@@ -182,5 +194,5 @@ def get_traffic_infos(config):
         for i, df in enumerate([lane0, lane1, lane2, lane3])
     )
     results_df = pd.concat(results, axis=1)
-    results_df.to_csv(results_dir/config["time_series"], index=False)
+    results_df.to_csv(results_dir / config["time_series"], index=False)
     return results_df

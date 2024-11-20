@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sxjm2024"
+name = "traffic-congestion-detection"
 version = "0.1.0"
 description = ""
 authors = ["Wang Haowei <hw_wang@whu.edu.cn>"]

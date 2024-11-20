@@ -37,7 +37,10 @@ Emergency Enabling of Highway Emergency Lanes Based on High Precision Simulation
   </p>
 
 </p>
-
+Solving Problem: How to Construct a Highway Traffic Congestion Model
+There are four video observation points (see Schematic 1) on a certain road section (length about 5000m, travel lane 2 + emergency lane 1):
+(1) For the data provided in the question, count the change rule of traffic flow parameters over time at the four observation points (finer statistics can be more conducive to future modeling);
+(2) the establishment of traffic flow congestion model, using the traffic flow in the four observation points of the basic parameters (traffic density, flow, speed, etc.) and the road situation (two lanes), give from the third point to the fourth blockage before the point between the road section may (no congestion) appear sustained (for example, the duration of half an hour) the state of the real-time warning of the congestion (for example, congestion 10 minutes before the warning) and the basis;
  
 ## Content
 
@@ -102,13 +105,11 @@ eg:
 
 ```
 sxjm2024
+├── notebook
 ├── figure
 │   ├── raw
 ├── res
 │   ├── configs
-├── notebooks
-│   ├── exploration
-│   └── final
 ├── src
 │   ├── models
 │   ├── results
@@ -116,9 +117,8 @@ sxjm2024
 │   │   ├── chart
 │   │   ├── detect
 │   │   ├── predict
+│   │   ├── analysis
 ├── tests
-│   ├── unit
-│   └── integration
 ├── .gitignore
 ├── README.md
 ├── pyproject.toml
@@ -134,70 +134,116 @@ Next you can draw the result by
 ```sh
 poetry run draw
 ```
+Or you can re-calculate the congestion information by:
+```sh
+poetry run calculate
+```
 Lastly, you can view the prediction results from time series models by:
 ```sh
 poetry run predict
 ```
 
 ## Roadmap
-
-We tested three open source models, [LLAMA3.1-8BInstruct](https://github.com/facebookresearch/llama), [GLM4-9B-Chat](https://github.com/THUDM/GLM), and [Qwen2-7B-Instruct](https://github.com/QwenLM/Qwen) on the RBLU benchmark with [ROUGE](https://arxiv.org/abs/2010.12495) and [BERT-Score](https://openreview.net/forum?id=SkeHuCVFDr), the results are as follows:
-
-<p align="center">
-
-| **Language** | **Domain**   | **Model Name** | **Rouge1** | **Rouge2** | **RougeL** | **RougeLsum** | **BERT score** |
-|--------------|--------------|----------------|------------|------------|------------|---------------|----------------|
-| **English**  | Financial    | GLM4           | **0.1322** | **0.0251** | **0.0929** | **0.1047**    | 0.5161         |
-|              |              | LLAMA3.1       | 0.1200     | 0.0212     | 0.0817     | 0.0970        | 0.4632         |
-|              |              | Qwen2          | 0.1260     | 0.0217     | 0.0878     | 0.1005        | **0.5181**     |
-|              | Legal        | GLM4           | **0.1409** | **0.0320** | **0.0930** | **0.1052**    | **0.5194**     |
-|              |              | LLAMA3.1       | 0.1271     | 0.0258     | 0.0827     | 0.0978        | 0.4686         |
-|              |              | Qwen2          | 0.1255     | 0.0203     | 0.0814     | 0.0964        | 0.4792         |
-|              | Medical      | GLM4           | **0.2115** | 0.0718     | **0.1588** | **0.1600**    | **0.5799**     |
-|              |              | LLAMA3.1       | 0.1865     | 0.0652     | 0.1428     | 0.1452        | 0.5512         |
-|              |              | Qwen2          | 0.1962     | **0.0740** | 0.1509     | 0.1509        | 0.5600         |
-| **Chinese**  | Financial    | GLM4           | **0.2131** | **0.0604** | **0.2120** | **0.2121**    | **0.7878**     |
-|              |              | LLAMA3.1       | 0.1566     | 0.0482     | 0.1555     | 0.1551        | 0.7386         |
-|              |              | Qwen2          | 0.1210     | 0.0295     | 0.1218     | 0.1215        | 0.7398         |
-|              | Legal        | GLM4           | **0.0587** | **0.0108** | **0.0587** | **0.0584**    | **0.7090**     |
-|              |              | LLAMA3.1       | 0.0355     | 0.0109     | 0.0349     | 0.0364        | 0.6527         |
-|              |              | Qwen2          | 0.0605     | 0.0088     | 0.0612     | 0.0615        | 0.6957         |
-|              | Medical      | GLM4           | **0.0893** | **0.0214** | 0.0880     | **0.0890**    | 0.5723         |
-|              |              | LLAMA3.1       | 0.0540     | 0.0111     | 0.0552     | 0.0542        | 0.5390         |
-|              |              | Qwen2          | 0.0843     | 0.0195     | **0.0841** | 0.0843        | **0.6198**     |
-
-### Similarity Scores in Multi-rounds
-
-The right side indicates 3 domains, and the top side indicates 2 score types and 2 languages. "Cosine" represents "BERT-Score", the cosine similarity of vectorized answer texts, while "Rouge1" is the corresponding Rouge-1 score. The datasets are in English and Chinese. In the legend, "Original" indicates Score_Original, and "Previous" indicates Score_Previous. The x-axis of each subplot shows the number of rounds (1–4), and the y-axis shows similarity scores (0.0–1.0).
+__Step1__: YOLOV5+DeepSort recognizes vehicles, refer to this project, in which we modified its recognition range and added separate recognition statistics for different lanes (including emergency lanes).
 
 <p align="center">
-  <img src="src/chart/line/legend.png" alt="Legend" width="80%" />
-</p>
-<p align="center">
-  <img src="src/chart/line/line_q_combined_plots.png" alt="Questions" width="45%" />
-  <img src="src/chart/line/line_a_combined_plots.png" alt="Answers" width="45%" />
-</p>
-<p align="center">
-  <span style="margin-right: 20%;">Questions</span>
-  <span>Answers</span>
+  <table>
+    <tr>
+      <td align="center">
+        <img src="figure/107.png" alt="Subplot 1" style="width:100%;">
+        <br>
+        <em>Subplot 1: 107 port</em>
+      </td>
+      <td align="center">
+        <img src="figure/105.png" alt="Subplot 2" style="width:100%;">
+        <br>
+        <em>Subplot 2: 105 port</em>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="figure/108.png" alt="Subplot 3" style="width:100%;">
+        <br>
+        <em>Subplot 3: 108 port</em>
+      </td>
+      <td align="center">
+        <img src="figure/103.png" alt="Subplot 4" style="width:100%;">
+        <br>
+        <em>Subplot 4: 103 port</em>
+      </td>
+    </tr>
+  </table>
 </p>
 
+__Step2__: Calculate the traffic information, you can see all the features in [traffic_info.md](notebook/traffic_info.md) and all the results in [result-folder](src/results) `line_page.png` abd `hist_page.png`.
+The following is some main results:
+<p align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="figure/count_all_0.png" alt="Subplot 1" style="width:100%;">
+        <br>
+        <em>Number of all vehicles at all times</em>
+      </td>
+      <td align="center">
+        <img src="figure/k-all-0.png" alt="Subplot 2" style="width:100%;">
+        <br>
+        <em>Densities of all vehicles </em>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="figure/k-all-3.png" alt="Subplot 3" style="width:100%;">
+        <br>
+        <em>Densities of all vehicles in the emergency lane</em>
+      </td>
+      <td align="center">
+        <img src="figure/v-all-0.png" alt="Subplot 4" style="width:100%;">
+        <br>
+        <em>Speed of all vehicles</em>
+      </td>
+    </tr>
+  </table>
+</p>
 
+__Step3__: Predict the congestion with 2 mode: Self-mode and Global-mode. 
+
+The `self-mode` means that the detection point predicts the traffic congestion in the next ten minutes based only on the road traffic data of the past period of time at that point (ignoring the data of other detection points). In this model: to predict the congestion at site 103 for the next 10 minutes, the time series model only accepts data from the 103 detection points, where the degree of traffic congestion is used as the target variable, and the covariates are the road condition data (including the flow, density, and speed of the main lanes, the overtaking lanes, and the emergency lanes, as well as the number of cars, trucks, buses, etc., on the road)
+
+The `global-mode` means that the simultaneous reference to the traffic road data of the four detection sites in the past period of time to predict the traffic congestion in the next ten minutes. For example, to predict the next 10 minutes of congestion at station 103 target variable, the time series model simultaneously accepts the road condition data of the four monitoring points as covariates, and at the same time introduces the poi values of the four stations as static variables for the training of the time series model
 ### Some insights
 
-</p>
+| Mode   | Model                        | MASE  | RMSE  | MAPE  | SMAPE | MAE   | RMSSE | WAPE  | WQL   | SQL   |
+|--------|---------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+| Self | SeasonalNaive             | 0.056 | 0.066 | 0.398 | 0.315 | 0.056 | 0.066 | 0.338 | 0.301 | 0.050 |
+|        | RecursiveTabular          | 0.076 | 0.091 | 0.538 | 0.660 | 0.076 | 0.091 | 0.456 | 0.347 | 0.057 |
+|        | DirectTabular             | 0.051 | 0.059 | 0.476 | 0.332 | 0.051 | 0.059 | 0.310 | 0.258 | 0.043 |
+|        | CrostonSBA                | 0.040 | 0.048 | 0.366 | 0.273 | 0.040 | 0.048 | 0.242 | 0.181 | 0.030 |
+|        | NPTS                      | 0.059 | 0.073 | 0.598 | 0.360 | 0.059 | 0.073 | 0.357 | 0.343 | 0.057 |
+|        | DynamicOptimizedTheta     | 0.045 | 0.055 | 0.350 | 0.273 | 0.045 | 0.055 | 0.269 | 0.212 | 0.035 |
+|        | AutoETS                   | 0.047 | 0.057 | 0.365 | 0.285 | 0.047 | 0.057 | 0.283 | 0.225 | 0.037 |
+|        | AutoARIMA                 | 0.045 | 0.055 | 0.391 | 0.289 | 0.045 | 0.055 | 0.273 | 0.240 | 0.040 |
+|        | Chronos[base]             | 0.047 | 0.057 | 0.431 | 0.308 | 0.047 | 0.057 | 0.286 | 0.240 | 0.040 |
+|        | TemporalFusionTransformer | 0.056 | 0.065 | 0.481 | 0.343 | 0.056 | 0.065 | 0.338 | 0.281 | 0.046 |
+|        | DeepAR                    | 0.064 | 0.074 | 0.510 | 0.367 | 0.064 | 0.074 | 0.386 | 0.323 | 0.053 |
+|        | PatchTST                  | 0.035 | 0.044 | 0.341 | 0.248 | 0.035 | 0.044 | 0.209 | 0.172 | 0.029 |
+|        | WeightedEnsemble          | 0.037 | 0.046 | 0.341 | 0.248 | 0.037 | 0.046 | 0.223 | 0.189 | 0.031 |
+| Global  | SeasonalNaive             | 0.010 | 0.010 | 0.182 | 0.167 | 0.010 | 0.010 | 0.182 | 0.645 | 0.037 |
+|        | RecursiveTabular          | 0.171 | 0.171 | 2.994 | 1.199 | 0.171 | 0.171 | 2.994 | 2.045 | 0.117 |
+|        | DirectTabular             | 0.119 | 0.119 | 2.087 | 1.021 | 0.119 | 0.119 | 2.087 | 1.819 | 0.104 |
+|        | CrostonSBA                | 0.033 | 0.033 | 0.576 | 0.447 | 0.033 | 0.033 | 0.576 | 0.402 | 0.023 |
+|        | NPTS                      | 0.143 | 0.143 | 2.500 | 1.111 | 0.143 | 0.143 | 2.500 | 2.345 | 0.134 |
+|        | DynamicOptimizedTheta     | 0.002 | 0.002 | 0.037 | 0.036 | 0.002 | 0.002 | 0.037 | 0.296 | 0.017 |
+|        | AutoETS                   | 0.010 | 0.010 | 0.183 | 0.168 | 0.010 | 0.010 | 0.183 | 0.147 | 0.008 |
+|        | AutoARIMA                 | 0.011 | 0.011 | 0.186 | 0.170 | 0.011 | 0.011 | 0.186 | 0.276 | 0.016 |
+|        | Chronos[base]             | 0.127 | 0.127 | 2.228 | 1.054 | 0.127 | 0.127 | 2.228 | 2.098 | 0.120 |
+|        | TemporalFusionTransformer | 0.157 | 0.157 | 2.747 | 1.157 | 0.157 | 0.157 | 2.747 | 2.590 | 0.148 |
+|        | DeepAR                    | 0.183 | 0.183 | 3.202 | 1.231 | 0.183 | 0.183 | 3.202 | 3.111 | 0.178 |
+|        | PatchTST                  | 0.129 | 0.129 | 2.263 | 1.062 | 0.129 | 0.129 | 2.263 | 2.202 | 0.126 |
+|        | WeightedEnsemble          | 0.172 | 0.172 | 3.007 | 1.201 | 0.172 | 0.172 | 3.007 | 2.810 | 0.161 |
 
-- **GLM4 Performance**: GLM4 demonstrates the strongest reverse inference performance among the models tested.
-  
-- **Semantic vs. Syntactic**: LLMs generally capture semantic meaning more effectively than syntactic structure.
 
-- **Cognitive Inertia**: LLMs exhibit cognitive inertia, as they tend to generate increasingly similar questions over multiple rounds.
 
-- **Forward vs. Reverse Inference**: LLMs show stronger forward inference capabilities than reverse inference.
-
-- **Language Differences**:
-  - **Chinese**: Due to the flexibility of expressions and varied word choices in Chinese, the outputs display greater semantic flexibility.
-  - **English**: English outputs maintain higher syntactic consistency due to the stricter syntactic rules in the language.
 
 
 ## Author
@@ -217,7 +263,7 @@ This project is licensed under the MIT License. For more details, please refer t
 
 
 <!-- links -->
-[your-project-path]:haowei2000/RBLU
+<!-- [your-project-path]:haowei2000/RBLU
 [contributors-shield]: https://img.shields.io/github/contributors/haowei2000/RBLU.svg?style=flat-square
 [contributors-url]: https://github.com/haowei2000/RBLU/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/haowei2000/RBLU.svg?style=flat-square
@@ -230,7 +276,7 @@ This project is licensed under the MIT License. For more details, please refer t
 [license-url]: https://github.com/haowei2000/RBLU/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/shaojintian
-
+ -->
 
 
 

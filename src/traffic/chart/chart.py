@@ -137,6 +137,6 @@ def draw_line(df, output_dir):
         plt.subplots_adjust(top=0.9, bottom=0.1, hspace=0.3, wspace=0.3)
 
         # 保存为PNG文件
-        plt.savefig(f'{output_dir}/line_page_{page + 1}.pdf',  bbox_inches='tight')
+        plt.savefig(f'{output_dir}/line_page_{page + 1}.png',  bbox_inches='tight')
         plt.close(fig)
     logging.info(f"Saved {total_pages}pages of line charts in {output_dir}.")
