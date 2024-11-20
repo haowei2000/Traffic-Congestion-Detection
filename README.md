@@ -104,7 +104,7 @@ poetry install
 eg:
 
 ```
-sxjm2024
+traffic-congestion-detection
 ├── notebook
 ├── figure
 │   ├── raw
