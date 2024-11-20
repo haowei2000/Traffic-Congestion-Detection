@@ -144,7 +144,7 @@ poetry run predict
 ```
 
 ## Roadmap
-__Step1__: YOLOV5+DeepSort recognizes vehicles, refer to this project, in which we modified its recognition range and added separate recognition statistics for different lanes (including emergency lanes).
+__Step1__: YOLOV5+DeepSort recognizes vehicles, refer to [win10_yolov5_deepsort_counting](https://github.com/dyh/win10_yolov5_deepsort_counting), in which we modified its recognition range and added separate recognition statistics for different lanes (including emergency lanes).
 
 <p align="center">
   <table>
@@ -206,12 +206,49 @@ The following is some main results:
   </table>
 </p>
 
-__Step3__: Predict the congestion with 2 mode: Self-mode and Global-mode. 
+__Step3__: Predict the congestion with 2 mode: `Self-mode` and `Global-mode`. 
 
-The `self-mode` means that the detection point predicts the traffic congestion in the next ten minutes based only on the road traffic data of the past period of time at that point (ignoring the data of other detection points). In this model: to predict the congestion at site 103 for the next 10 minutes, the time series model only accepts data from the 103 detection points, where the degree of traffic congestion is used as the target variable, and the covariates are the road condition data (including the flow, density, and speed of the main lanes, the overtaking lanes, and the emergency lanes, as well as the number of cars, trucks, buses, etc., on the road)
+The `self-mode` means that the detection point predicts the traffic congestion in the next ten minutes based only on the road traffic data of the past period of time at that point (ignoring the data of other detection points). In this model: to predict the congestion at site 103 for the next 10 minutes, the time series model only accepts data from the 103 detection points, where the degree of traffic congestion is used as the target variable, and the covariates are the road condition data (including the flow, density, and speed of the main lanes, the overtaking lanes, and the emergency lanes, as well as the number of cars, trucks, buses, etc., on the road).
 
-The `global-mode` means that the simultaneous reference to the traffic road data of the four detection sites in the past period of time to predict the traffic congestion in the next ten minutes. For example, to predict the next 10 minutes of congestion at station 103 target variable, the time series model simultaneously accepts the road condition data of the four monitoring points as covariates, and at the same time introduces the poi values of the four stations as static variables for the training of the time series model
-### Some insights
+The `global-mode` means that the simultaneous reference to the traffic road data of the four detection sites in the past period of time to predict the traffic congestion in the next ten minutes. For example, to predict the next 10 minutes of congestion at station 103 target variable, the time series model simultaneously accepts the road condition data of the four monitoring points as covariates, and at the same time introduces the poi values of the four stations as static variables for the training of the time series model.
+
+<p align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="figure/mode1.png" alt="Subplot 1" style="width:100%;">
+        <br>
+        <em>Self mode</em>
+      </td>
+      <td align="center">
+        <img src="figure/mode2.png" alt="Subplot 2" style="width:90%;">
+        <br>
+        <em>Global mode</em>
+      </td>
+    </tr>
+  </table>
+</p>
+
+### Result
+
+<p align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="figure/line-predict-self.png" alt="Self mode" style="width:100%;">
+        <br>
+        <em>Self mode</em>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="figure/line-predict-global.png" alt="Global mode" style="width:100%;">
+        <br>
+        <em>Global mode</em>
+      </td>
+    </tr>
+  </table>
+</p>
 
 | Mode   | Model                        | MASE  | RMSE  | MAPE  | SMAPE | MAE   | RMSSE | WAPE  | WQL   | SQL   |
 |--------|---------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
@@ -241,9 +278,6 @@ The `global-mode` means that the simultaneous reference to the traffic road data
 |        | DeepAR                    | 0.183 | 0.183 | 3.202 | 1.231 | 0.183 | 0.183 | 3.202 | 3.111 | 0.178 |
 |        | PatchTST                  | 0.129 | 0.129 | 2.263 | 1.062 | 0.129 | 0.129 | 2.263 | 2.202 | 0.126 |
 |        | WeightedEnsemble          | 0.172 | 0.172 | 3.007 | 1.201 | 0.172 | 0.172 | 3.007 | 2.810 | 0.161 |
-
-
-
 
 
 ## Author
