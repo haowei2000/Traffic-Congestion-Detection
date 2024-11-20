@@ -1,14 +1,18 @@
-import numpy as np
-import cv2
 import json
+from typing import Any, Dict, List, Set, Tuple
+import warnings
+
+import cv2
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from typing import Dict, List, Set, Tuple, Any
+
 import traffic.detect.tracker as tracker
 from traffic.detect.detector import Detector
+from traffic.my_path import results_dir,video_dir
 
 
-def create_mask_image(config: Dict[str, Any]) -> np.ndarray:
+def _create_mask_image(config: Dict[str, Any]) -> np.ndarray:
     """
     Creates a mask image based on the provided configuration.
     Args:
@@ -33,7 +37,7 @@ def create_mask_image(config: Dict[str, Any]) -> np.ndarray:
     return mask_image_temp[:, :, np.newaxis]
 
 
-def create_color_polygons_image(config: Dict[str, Any]) -> np.ndarray:
+def _create_color_polygons_image(config: Dict[str, Any]) -> np.ndarray:
     """
     Creates an image with colored polygons based on the provided configuration.
 
@@ -59,7 +63,7 @@ def create_color_polygons_image(config: Dict[str, Any]) -> np.ndarray:
     return color_polygons_image
 
 
-def remove_left_ids(
+def _remove_left_ids(
     set_ids_in_frame: Set[int], lane_sets: Dict[str, Set[int]]
 ) -> None:
     """
@@ -80,7 +84,7 @@ def remove_left_ids(
                 current_set.remove(track_id)
 
 
-def update_lane_sets(
+def _update_lane_sets(
     track_id: int, value: int, lane_sets: Dict[str, Set[int]]
 ) -> None:
     """
@@ -108,7 +112,7 @@ def update_lane_sets(
         lane_sets["total_lane3"].add(track_id)
 
 
-def draw_text_on_frame(
+def _draw_text_on_frame(
     output_image_frame: np.ndarray,
     lane_sets: Dict[str, Set[int]],
     draw_text_position: Tuple[int, int],
@@ -143,7 +147,7 @@ def draw_text_on_frame(
     )
 
 
-def initialize_lane_sets() -> Dict[str, Set[int]]:
+def _initialize_lane_sets() -> Dict[str, Set[int]]:
     """
     Initializes and returns a dictionary containing empty sets for different lanes.
 
@@ -168,7 +172,7 @@ def initialize_lane_sets() -> Dict[str, Set[int]]:
     }
 
 
-def process_frame(
+def _process_frame(
     im: np.ndarray,
     bboxes: List[Tuple[int, int, int, int, int, int]],
     polygon_mask: np.ndarray,
@@ -212,18 +216,18 @@ def process_frame(
         for item_bbox in list_bboxs:
             x1, y1, x2, y2, label, track_id = item_bbox
             id_label_dict[track_id] = label
-            x_center, y_center = get_center_coordinates(x1, x2, y2, config)
+            x_center, y_center = _get_center_coordinates(x1, x2, y2, config)
             cv2.circle(
                 output_image_frame, (x_center, y_center), 5, (0, 0, 255), -1
             )
             value = polygon_mask[y_center, x_center, 0]
             set_ids_in_frame.add(track_id)
-            update_lane_sets(track_id, value, lane_sets)
+            _update_lane_sets(track_id, value, lane_sets)
 
     return output_image_frame, set_ids_in_frame
 
 
-def get_center_coordinates(
+def _get_center_coordinates(
     x1: int, x2: int, y2: int, config: Dict[str, Any]
 ) -> Tuple[int, int]:
     """
@@ -245,7 +249,7 @@ def get_center_coordinates(
     return x_center, y_center
 
 
-def clear_current_lane_sets(lane_sets: Dict[str, Set[int]]) -> None:
+def _clear_current_lane_sets(lane_sets: Dict[str, Set[int]]) -> None:
     """
     Clears the sets of current lanes in the provided lane_sets dictionary.
 
@@ -263,7 +267,7 @@ def clear_current_lane_sets(lane_sets: Dict[str, Set[int]]) -> None:
     lane_sets["current_lane3"].clear()
 
 
-def save_output_video(
+def _save_output_video(
     config: Dict[str, Any], output_image_frame: np.ndarray
 ) -> None:
     """
@@ -279,12 +283,12 @@ def save_output_video(
     if "video_writer" not in locals():
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         video_writer = cv2.VideoWriter(
-            config["output_video_path"], fourcc, 30, (960, 540)
+            results_dir/config["output_video_path"], fourcc, 30, (960, 540)
         )
     video_writer.write(output_image_frame)
 
 
-def save_lane_set(
+def _save_lane_set(
     f: Any, capture: cv2.VideoCapture, lane_sets: Dict[str, Set[int]]
 ) -> None:
     """
@@ -328,7 +332,7 @@ def save_lane_set(
     f.write(json.dumps(data_to_write) + "\n")
 
 
-def save_id_label_dict(
+def _save_id_label_dict(
     id_label_dict: Dict[int, int], config: Dict[str, Any]
 ) -> None:
     """
@@ -345,7 +349,8 @@ def save_id_label_dict(
     id_label_df = pd.DataFrame(
         list(id_label_dict.items()), columns=["track_id", "label"]
     )
-    id_label_df.to_csv(config["id_label_path"], index=False)
+    output_path = results_dir/config["id_label_path"]
+    id_label_df.to_csv( output_path, index=False)
 
 
 def detect_video(config: Dict[str, Any]) -> pd.DataFrame:
@@ -378,54 +383,59 @@ def detect_video(config: Dict[str, Any]) -> pd.DataFrame:
         - The function uses OpenCV for video processing and drawing annotations.
         - The tqdm library is used to display a progress bar for frame processing.
     """
-    polygon_mask = create_mask_image(config)
-    color_polygons_image = create_color_polygons_image(config)
+    warnings.filterwarnings("ignore")
+    polygon_mask = _create_mask_image(config)
+    color_polygons_image = _create_color_polygons_image(config)
 
-    lane_sets = initialize_lane_sets()
+    lane_sets = _initialize_lane_sets()
     font_draw_number = cv2.FONT_HERSHEY_SIMPLEX
     draw_text_position = (int(960 * 0.01), int(540 * 0.05))
 
     detector = Detector()
-    capture = cv2.VideoCapture(config["input_video_path"])
+    video_path = video_dir/config["input_video_path"]
+    if video_path.is_file():
+        capture = cv2.VideoCapture(video_path.as_posix())
+    else:
+        raise FileNotFoundError(f"Video file not found: {video_path}")
 
-    with open(config["json_path"], "w", encoding="utf-8") as f:
+    with open(results_dir/config["json_path"], "w", encoding="utf-8") as f:
         id_label_dict = {}
         total_frames = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
-
         for _ in tqdm(range(total_frames), desc="Processing frames"):
             _, im = capture.read()
             if im is None:
                 break
-            im = cv2.resize(im, (960, 540))
-            bboxes = detector.detect(im)
-
-            output_image_frame, set_ids_in_frame = process_frame(
-                im,
-                bboxes,
-                polygon_mask,
-                color_polygons_image,
-                lane_sets,
-                id_label_dict,
-                config,
-            )
-
-            if bboxes:
-                remove_left_ids(set_ids_in_frame, lane_sets)
-                save_lane_set(f, capture, lane_sets)
             else:
-                clear_current_lane_sets(lane_sets)
+                im = cv2.resize(im, (960, 540))
+                bboxes = detector.detect(im)
 
-            output_image_frame = draw_text_on_frame(
-                output_image_frame,
-                lane_sets,
-                draw_text_position,
-                font_draw_number,
-            )
-            cv2.waitKey(1)
-            if config.get("output_video_path"):
-                save_output_video(config, output_image_frame)
+                output_image_frame, set_ids_in_frame = _process_frame(
+                    im,
+                    bboxes,
+                    polygon_mask,
+                    color_polygons_image,
+                    lane_sets,
+                    id_label_dict,
+                    config,
+                )
 
-    save_id_label_dict(id_label_dict, config)
+                if bboxes:
+                    _remove_left_ids(set_ids_in_frame, lane_sets)
+                    _save_lane_set(f, capture, lane_sets)
+                else:
+                    _clear_current_lane_sets(lane_sets)
+
+                output_image_frame = _draw_text_on_frame(
+                    output_image_frame,
+                    lane_sets,
+                    draw_text_position,
+                    font_draw_number,
+                )
+                cv2.waitKey(1)
+                if config.get("output_video_path"):
+                    _save_output_video(config, output_image_frame)
+
+    _save_id_label_dict(id_label_dict, config)
     capture.release()
     cv2.destroyAllWindows()
     return pd.DataFrame(

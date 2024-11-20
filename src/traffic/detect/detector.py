@@ -1,5 +1,5 @@
-import torch
 import numpy as np
+import torch
 
 from models.experimental import attempt_load
 from utils.datasets import letterbox

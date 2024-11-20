@@ -1,0 +1,324 @@
+Beginning AutoGluon training... Time limit = 15s
+AutoGluon will save models to 'AutogluonModels/ag-20241120_065102'
+=================== System Info ===================
+AutoGluon Version:  1.1.1
+Python Version:     3.8.19
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #48~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct  7 11:24:13 UTC 2
+CPU Count:          32
+GPU Count:          2
+Memory Avail:       238.96 GB / 251.56 GB (95.0%)
+Disk Space Avail:   5479.58 GB / 7392.19 GB (74.1%)
+===================================================
+
+Fitting with arguments:
+{'enable_ensemble': True,
+ 'eval_metric': WQL,
+ 'freq': 'T',
+ 'hyperparameters': 'default',
+ 'known_covariates_names': [],
+ 'num_val_windows': 1,
+ 'prediction_length': 1,
+ 'quantile_levels': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+ 'random_seed': 123,
+ 'refit_every_n_windows': 1,
+ 'refit_full': False,
+ 'skip_model_selection': False,
+ 'target': 'overall_congestion',
+ 'time_limit': 15,
+ 'verbosity': 2}
+
+train_data with frequency 'None' has been resampled to frequency 'T'.
+Provided train_data has 413 rows (NaN fraction=25.9%), 4 time series. Median time series length is 118 (min=49, max=128). 
+
+Provided data contains following columns:
+	target: 'overall_congestion'
+	past_covariates:
+		categorical:        []
+		continuous (float): ['count_all_0', 'new_count_all_0', 'removed_count_all_0', 'q_all_0', 'k_all_0', 'v_all_0', ...]
+	static_features:
+		categorical:        []
+		continuous (float): ['restaurant', 'caffe', 'service', 'landscape']
+
+AutoGluon will ignore following non-numeric/non-informative columns:
+	ignored covariates:      ['count_bus_0', 'count_bus_1', 'count_bus_2', 'count_bus_3', 'count_car_0', 'count_car_1', 'count_car_2', 'count_car_3', 'count_truck_0', 'count_truck_1', 'count_truck_2', 'count_truck_3', 'k_bus_0', 'k_bus_1', 'k_bus_2', 'k_bus_3', 'k_car_0', 'k_car_1', 'k_car_2', 'k_car_3', 'k_truck_0', 'k_truck_1', 'k_truck_2', 'k_truck_3', 'new_count_bus_0', 'new_count_bus_1', 'new_count_bus_2', 'new_count_bus_3', 'new_count_car_0', 'new_count_car_1', 'new_count_car_2', 'new_count_car_3', 'new_count_truck_0', 'new_count_truck_1', 'new_count_truck_2', 'new_count_truck_3', 'q_bus_0', 'q_bus_1', 'q_bus_2', 'q_bus_3', 'q_car_0', 'q_car_1', 'q_car_2', 'q_car_3', 'q_truck_0', 'q_truck_1', 'q_truck_2', 'q_truck_3', 'removed_count_bus_0', 'removed_count_bus_1', 'removed_count_bus_2', 'removed_count_bus_3', 'removed_count_car_0', 'removed_count_car_1', 'removed_count_car_2', 'removed_count_car_3', 'removed_count_truck_0', 'removed_count_truck_1', 'removed_count_truck_2', 'removed_count_truck_3', 'v_bus_0', 'v_bus_1', 'v_bus_2', 'v_bus_3', 'v_car_0', 'v_car_1', 'v_car_2', 'v_car_3', 'v_truck_0', 'v_truck_1', 'v_truck_2', 'v_truck_3']
+
+To learn how to fix incorrectly inferred types, please see documentation for TimeSeriesPredictor.fit
+
+AutoGluon will gauge predictive performance using evaluation metric: 'WQL'
+	This metric's sign has been flipped to adhere to being higher_is_better. The metric score can be multiplied by -1 to get the metric value.
+===================================================
+
+Starting training. Start time is 2024-11-20 14:51:04
+Models that will be trained: ['SeasonalNaive', 'RecursiveTabular', 'DirectTabular', 'CrostonSBA', 'NPTS', 'DynamicOptimizedTheta', 'AutoETS', 'AutoARIMA', 'Chronos[base]', 'TemporalFusionTransformer', 'DeepAR', 'PatchTST']
+Training timeseries model SeasonalNaive. Training for up to 1.1s of the 13.8s of remaining time.
+	Time limit exceeded... Skipping SeasonalNaive.
+Training timeseries model RecursiveTabular. Training for up to 1.0s of the 12.4s of remaining time.
+	Time series in the dataset are too short for chosen differences [1440]. Setting differences to [1].
+	Warning: Exception caused RecursiveTabular to fail during training... Skipping this model.
+	Not enough time left to train models. Consider specifying a larger time_limit. Time remaining: -0.43s
+Training timeseries model DirectTabular. Training for up to 1.0s of the 11.0s of remaining time.
+	-0.1138       = Validation score (-WQL)
+	1.15    s     = Training runtime
+	0.06    s     = Validation (prediction) runtime
+Training timeseries model CrostonSBA. Training for up to 1.0s of the 9.8s of remaining time.
+	Time limit exceeded... Skipping CrostonSBA.
+Training timeseries model NPTS. Training for up to 1.1s of the 9.8s of remaining time.
+	-0.1966       = Validation score (-WQL)
+	0.02    s     = Training runtime
+	1.09    s     = Validation (prediction) runtime
+Training timeseries model DynamicOptimizedTheta. Training for up to 1.1s of the 8.7s of remaining time.
+	Time limit exceeded... Skipping DynamicOptimizedTheta.
+Training timeseries model AutoETS. Training for up to 1.2s of the 8.7s of remaining time.
+	Time limit exceeded... Skipping AutoETS.
+Training timeseries model AutoARIMA. Training for up to 1.4s of the 8.7s of remaining time.
+	Time limit exceeded... Skipping AutoARIMA.
+Training timeseries model Chronos[base]. Training for up to 1.7s of the 8.7s of remaining time.
+	-0.0998       = Validation score (-WQL)
+	0.01    s     = Training runtime
+	33.14   s     = Validation (prediction) runtime
+Stopping training due to lack of time remaining. Time left: -24.5 seconds
+Not fitting ensemble due to lack of time remaining. Time left: -24.5 seconds
+Training complete. Models trained: ['DirectTabular', 'NPTS', 'Chronos[base]']
+Total runtime: 38.43 s
+Best model: Chronos[base]
+Best model score: -0.0998
+Beginning AutoGluon training... Time limit = 15s
+AutoGluon will save models to 'AutogluonModels/ag-20241120_065142'
+=================== System Info ===================
+AutoGluon Version:  1.1.1
+Python Version:     3.8.19
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #48~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct  7 11:24:13 UTC 2
+CPU Count:          32
+GPU Count:          2
+Memory Avail:       237.41 GB / 251.56 GB (94.4%)
+Disk Space Avail:   5479.58 GB / 7392.19 GB (74.1%)
+===================================================
+
+Fitting with arguments:
+{'enable_ensemble': True,
+ 'eval_metric': WQL,
+ 'freq': 'T',
+ 'hyperparameters': 'default',
+ 'known_covariates_names': [],
+ 'num_val_windows': 1,
+ 'prediction_length': 2,
+ 'quantile_levels': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+ 'random_seed': 123,
+ 'refit_every_n_windows': 1,
+ 'refit_full': False,
+ 'skip_model_selection': False,
+ 'target': 'overall_congestion',
+ 'time_limit': 15,
+ 'verbosity': 2}
+
+train_data with frequency 'None' has been resampled to frequency 'T'.
+Provided train_data has 413 rows (NaN fraction=25.9%), 4 time series. Median time series length is 118 (min=49, max=128). 
+
+Provided data contains following columns:
+	target: 'overall_congestion'
+	past_covariates:
+		categorical:        []
+		continuous (float): ['count_all_0', 'new_count_all_0', 'removed_count_all_0', 'q_all_0', 'k_all_0', 'v_all_0', ...]
+	static_features:
+		categorical:        []
+		continuous (float): ['restaurant', 'caffe', 'service', 'landscape']
+
+AutoGluon will ignore following non-numeric/non-informative columns:
+	ignored covariates:      ['count_bus_0', 'count_bus_1', 'count_bus_2', 'count_bus_3', 'count_car_0', 'count_car_1', 'count_car_2', 'count_car_3', 'count_truck_0', 'count_truck_1', 'count_truck_2', 'count_truck_3', 'k_bus_0', 'k_bus_1', 'k_bus_2', 'k_bus_3', 'k_car_0', 'k_car_1', 'k_car_2', 'k_car_3', 'k_truck_0', 'k_truck_1', 'k_truck_2', 'k_truck_3', 'new_count_bus_0', 'new_count_bus_1', 'new_count_bus_2', 'new_count_bus_3', 'new_count_car_0', 'new_count_car_1', 'new_count_car_2', 'new_count_car_3', 'new_count_truck_0', 'new_count_truck_1', 'new_count_truck_2', 'new_count_truck_3', 'q_bus_0', 'q_bus_1', 'q_bus_2', 'q_bus_3', 'q_car_0', 'q_car_1', 'q_car_2', 'q_car_3', 'q_truck_0', 'q_truck_1', 'q_truck_2', 'q_truck_3', 'removed_count_bus_0', 'removed_count_bus_1', 'removed_count_bus_2', 'removed_count_bus_3', 'removed_count_car_0', 'removed_count_car_1', 'removed_count_car_2', 'removed_count_car_3', 'removed_count_truck_0', 'removed_count_truck_1', 'removed_count_truck_2', 'removed_count_truck_3', 'v_bus_0', 'v_bus_1', 'v_bus_2', 'v_bus_3', 'v_car_0', 'v_car_1', 'v_car_2', 'v_car_3', 'v_truck_0', 'v_truck_1', 'v_truck_2', 'v_truck_3']
+
+To learn how to fix incorrectly inferred types, please see documentation for TimeSeriesPredictor.fit
+
+AutoGluon will gauge predictive performance using evaluation metric: 'WQL'
+	This metric's sign has been flipped to adhere to being higher_is_better. The metric score can be multiplied by -1 to get the metric value.
+===================================================
+
+Starting training. Start time is 2024-11-20 14:51:45
+Models that will be trained: ['SeasonalNaive', 'RecursiveTabular', 'DirectTabular', 'CrostonSBA', 'NPTS', 'DynamicOptimizedTheta', 'AutoETS', 'AutoARIMA', 'Chronos[base]', 'TemporalFusionTransformer', 'DeepAR', 'PatchTST']
+Training timeseries model SeasonalNaive. Training for up to 1.0s of the 13.2s of remaining time.
+	Time limit exceeded... Skipping SeasonalNaive.
+Training timeseries model RecursiveTabular. Training for up to 1.0s of the 11.6s of remaining time.
+	Time series in the dataset are too short for chosen differences [1440]. Setting differences to [1].
+	-0.0694       = Validation score (-WQL)
+	0.85    s     = Training runtime
+	0.67    s     = Validation (prediction) runtime
+Training timeseries model DirectTabular. Training for up to 0.9s of the 10.0s of remaining time.
+	-0.1015       = Validation score (-WQL)
+	1.05    s     = Training runtime
+	0.05    s     = Validation (prediction) runtime
+Training timeseries model CrostonSBA. Training for up to 0.9s of the 8.9s of remaining time.
+	Time limit exceeded... Skipping CrostonSBA.
+Training timeseries model NPTS. Training for up to 1.0s of the 8.9s of remaining time.
+	Time limit exceeded... Skipping NPTS.
+Training timeseries model DynamicOptimizedTheta. Training for up to 0.9s of the 7.4s of remaining time.
+	Time limit exceeded... Skipping DynamicOptimizedTheta.
+Training timeseries model AutoETS. Training for up to 1.1s of the 7.4s of remaining time.
+	Time limit exceeded... Skipping AutoETS.
+Training timeseries model AutoARIMA. Training for up to 1.2s of the 7.4s of remaining time.
+	Time limit exceeded... Skipping AutoARIMA.
+Training timeseries model Chronos[base]. Training for up to 1.5s of the 7.3s of remaining time.
+	-0.0832       = Validation score (-WQL)
+	0.01    s     = Training runtime
+	30.61   s     = Validation (prediction) runtime
+Stopping training due to lack of time remaining. Time left: -23.3 seconds
+Not fitting ensemble due to lack of time remaining. Time left: -23.3 seconds
+Training complete. Models trained: ['RecursiveTabular', 'DirectTabular', 'Chronos[base]']
+Total runtime: 36.53 s
+Best model: RecursiveTabular
+Best model score: -0.0694
+Beginning AutoGluon training... Time limit = 15s
+AutoGluon will save models to 'AutogluonModels/ag-20241120_065221'
+=================== System Info ===================
+AutoGluon Version:  1.1.1
+Python Version:     3.8.19
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #48~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct  7 11:24:13 UTC 2
+CPU Count:          32
+GPU Count:          2
+Memory Avail:       237.86 GB / 251.56 GB (94.6%)
+Disk Space Avail:   5479.58 GB / 7392.19 GB (74.1%)
+===================================================
+
+Fitting with arguments:
+{'enable_ensemble': True,
+ 'eval_metric': WQL,
+ 'freq': 'T',
+ 'hyperparameters': 'default',
+ 'known_covariates_names': [],
+ 'num_val_windows': 1,
+ 'prediction_length': 3,
+ 'quantile_levels': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+ 'random_seed': 123,
+ 'refit_every_n_windows': 1,
+ 'refit_full': False,
+ 'skip_model_selection': False,
+ 'target': 'overall_congestion',
+ 'time_limit': 15,
+ 'verbosity': 2}
+
+train_data with frequency 'None' has been resampled to frequency 'T'.
+Provided train_data has 413 rows (NaN fraction=25.9%), 4 time series. Median time series length is 118 (min=49, max=128). 
+
+Provided data contains following columns:
+	target: 'overall_congestion'
+	past_covariates:
+		categorical:        []
+		continuous (float): ['count_all_0', 'new_count_all_0', 'removed_count_all_0', 'q_all_0', 'k_all_0', 'v_all_0', ...]
+	static_features:
+		categorical:        []
+		continuous (float): ['restaurant', 'caffe', 'service', 'landscape']
+
+AutoGluon will ignore following non-numeric/non-informative columns:
+	ignored covariates:      ['count_bus_0', 'count_bus_1', 'count_bus_2', 'count_bus_3', 'count_car_0', 'count_car_1', 'count_car_2', 'count_car_3', 'count_truck_0', 'count_truck_1', 'count_truck_2', 'count_truck_3', 'k_bus_0', 'k_bus_1', 'k_bus_2', 'k_bus_3', 'k_car_0', 'k_car_1', 'k_car_2', 'k_car_3', 'k_truck_0', 'k_truck_1', 'k_truck_2', 'k_truck_3', 'new_count_bus_0', 'new_count_bus_1', 'new_count_bus_2', 'new_count_bus_3', 'new_count_car_0', 'new_count_car_1', 'new_count_car_2', 'new_count_car_3', 'new_count_truck_0', 'new_count_truck_1', 'new_count_truck_2', 'new_count_truck_3', 'q_bus_0', 'q_bus_1', 'q_bus_2', 'q_bus_3', 'q_car_0', 'q_car_1', 'q_car_2', 'q_car_3', 'q_truck_0', 'q_truck_1', 'q_truck_2', 'q_truck_3', 'removed_count_bus_0', 'removed_count_bus_1', 'removed_count_bus_2', 'removed_count_bus_3', 'removed_count_car_0', 'removed_count_car_1', 'removed_count_car_2', 'removed_count_car_3', 'removed_count_truck_0', 'removed_count_truck_1', 'removed_count_truck_2', 'removed_count_truck_3', 'v_bus_0', 'v_bus_1', 'v_bus_2', 'v_bus_3', 'v_car_0', 'v_car_1', 'v_car_2', 'v_car_3', 'v_truck_0', 'v_truck_1', 'v_truck_2', 'v_truck_3']
+
+To learn how to fix incorrectly inferred types, please see documentation for TimeSeriesPredictor.fit
+
+AutoGluon will gauge predictive performance using evaluation metric: 'WQL'
+	This metric's sign has been flipped to adhere to being higher_is_better. The metric score can be multiplied by -1 to get the metric value.
+===================================================
+
+Starting training. Start time is 2024-11-20 14:52:24
+Models that will be trained: ['SeasonalNaive', 'RecursiveTabular', 'DirectTabular', 'CrostonSBA', 'NPTS', 'DynamicOptimizedTheta', 'AutoETS', 'AutoARIMA', 'Chronos[base]', 'TemporalFusionTransformer', 'DeepAR', 'PatchTST']
+Training timeseries model SeasonalNaive. Training for up to 1.0s of the 13.3s of remaining time.
+	Time limit exceeded... Skipping SeasonalNaive.
+Training timeseries model RecursiveTabular. Training for up to 1.0s of the 11.5s of remaining time.
+	Time series in the dataset are too short for chosen differences [1440]. Setting differences to [1].
+	-0.0954       = Validation score (-WQL)
+	0.93    s     = Training runtime
+	0.08    s     = Validation (prediction) runtime
+Training timeseries model DirectTabular. Training for up to 1.0s of the 10.5s of remaining time.
+	-0.1206       = Validation score (-WQL)
+	1.16    s     = Training runtime
+	0.06    s     = Validation (prediction) runtime
+Training timeseries model CrostonSBA. Training for up to 0.9s of the 9.3s of remaining time.
+	Time limit exceeded... Skipping CrostonSBA.
+Training timeseries model NPTS. Training for up to 1.0s of the 9.3s of remaining time.
+	Time limit exceeded... Skipping NPTS.
+Training timeseries model DynamicOptimizedTheta. Training for up to 1.0s of the 7.6s of remaining time.
+	Time limit exceeded... Skipping DynamicOptimizedTheta.
+Training timeseries model AutoETS. Training for up to 1.1s of the 7.6s of remaining time.
+	Time limit exceeded... Skipping AutoETS.
+Training timeseries model AutoARIMA. Training for up to 1.3s of the 7.6s of remaining time.
+	Time limit exceeded... Skipping AutoARIMA.
+Training timeseries model Chronos[base]. Training for up to 1.5s of the 7.6s of remaining time.
+	-0.0895       = Validation score (-WQL)
+	0.01    s     = Training runtime
+	30.62   s     = Validation (prediction) runtime
+Stopping training due to lack of time remaining. Time left: -23.1 seconds
+Not fitting ensemble due to lack of time remaining. Time left: -23.1 seconds
+Training complete. Models trained: ['RecursiveTabular', 'DirectTabular', 'Chronos[base]']
+Total runtime: 36.38 s
+Best model: Chronos[base]
+Best model score: -0.0895
+Beginning AutoGluon training... Time limit = 15s
+AutoGluon will save models to 'AutogluonModels/ag-20241120_065300'
+=================== System Info ===================
+AutoGluon Version:  1.1.1
+Python Version:     3.8.19
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #48~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct  7 11:24:13 UTC 2
+CPU Count:          32
+GPU Count:          2
+Memory Avail:       237.78 GB / 251.56 GB (94.5%)
+Disk Space Avail:   5479.58 GB / 7392.19 GB (74.1%)
+===================================================
+
+Fitting with arguments:
+{'enable_ensemble': True,
+ 'eval_metric': WQL,
+ 'freq': 'T',
+ 'hyperparameters': 'default',
+ 'known_covariates_names': [],
+ 'num_val_windows': 1,
+ 'prediction_length': 4,
+ 'quantile_levels': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+ 'random_seed': 123,
+ 'refit_every_n_windows': 1,
+ 'refit_full': False,
+ 'skip_model_selection': False,
+ 'target': 'overall_congestion',
+ 'time_limit': 15,
+ 'verbosity': 2}
+
+train_data with frequency 'None' has been resampled to frequency 'T'.
+Provided train_data has 413 rows (NaN fraction=25.9%), 4 time series. Median time series length is 118 (min=49, max=128). 
+
+Provided data contains following columns:
+	target: 'overall_congestion'
+	past_covariates:
+		categorical:        []
+		continuous (float): ['count_all_0', 'new_count_all_0', 'removed_count_all_0', 'q_all_0', 'k_all_0', 'v_all_0', ...]
+	static_features:
+		categorical:        []
+		continuous (float): ['restaurant', 'caffe', 'service', 'landscape']
+
+AutoGluon will ignore following non-numeric/non-informative columns:
+	ignored covariates:      ['count_bus_0', 'count_bus_1', 'count_bus_2', 'count_bus_3', 'count_car_0', 'count_car_1', 'count_car_2', 'count_car_3', 'count_truck_0', 'count_truck_1', 'count_truck_2', 'count_truck_3', 'k_bus_0', 'k_bus_1', 'k_bus_2', 'k_bus_3', 'k_car_0', 'k_car_1', 'k_car_2', 'k_car_3', 'k_truck_0', 'k_truck_1', 'k_truck_2', 'k_truck_3', 'new_count_bus_0', 'new_count_bus_1', 'new_count_bus_2', 'new_count_bus_3', 'new_count_car_0', 'new_count_car_1', 'new_count_car_2', 'new_count_car_3', 'new_count_truck_0', 'new_count_truck_1', 'new_count_truck_2', 'new_count_truck_3', 'q_bus_0', 'q_bus_1', 'q_bus_2', 'q_bus_3', 'q_car_0', 'q_car_1', 'q_car_2', 'q_car_3', 'q_truck_0', 'q_truck_1', 'q_truck_2', 'q_truck_3', 'removed_count_bus_0', 'removed_count_bus_1', 'removed_count_bus_2', 'removed_count_bus_3', 'removed_count_car_0', 'removed_count_car_1', 'removed_count_car_2', 'removed_count_car_3', 'removed_count_truck_0', 'removed_count_truck_1', 'removed_count_truck_2', 'removed_count_truck_3', 'v_bus_0', 'v_bus_1', 'v_bus_2', 'v_bus_3', 'v_car_0', 'v_car_1', 'v_car_2', 'v_car_3', 'v_truck_0', 'v_truck_1', 'v_truck_2', 'v_truck_3']
+
+To learn how to fix incorrectly inferred types, please see documentation for TimeSeriesPredictor.fit
+
+AutoGluon will gauge predictive performance using evaluation metric: 'WQL'
+	This metric's sign has been flipped to adhere to being higher_is_better. The metric score can be multiplied by -1 to get the metric value.
+===================================================
+
+Starting training. Start time is 2024-11-20 14:53:02
+Models that will be trained: ['SeasonalNaive', 'RecursiveTabular', 'DirectTabular', 'CrostonSBA', 'NPTS', 'DynamicOptimizedTheta', 'AutoETS', 'AutoARIMA', 'Chronos[base]', 'TemporalFusionTransformer', 'DeepAR', 'PatchTST']
+Training timeseries model SeasonalNaive. Training for up to 1.0s of the 13.3s of remaining time.
+	Time limit exceeded... Skipping SeasonalNaive.
+Training timeseries model RecursiveTabular. Training for up to 1.0s of the 11.6s of remaining time.
+	Time series in the dataset are too short for chosen differences [1440]. Setting differences to [1].
+	-0.2462       = Validation score (-WQL)
+	0.92    s     = Training runtime
+	0.09    s     = Validation (prediction) runtime
+Training timeseries model DirectTabular. Training for up to 1.0s of the 10.6s of remaining time.
+	-0.1358       = Validation score (-WQL)
+	1.10    s     = Training runtime
+	0.06    s     = Validation (prediction) runtime
+Training timeseries model CrostonSBA. Training for up to 0.9s of the 9.4s of remaining time.
+	Time limit exceeded... Skipping CrostonSBA.
+Training timeseries model NPTS. Training for up to 1.0s of the 9.4s of remaining time.

@@ -1,25 +1,15 @@
 import os
+from pathlib import Path
+
+from matplotlib.patches import Patch
 import pandas as pd
-import matplotlib.pyplot as plt
+from autogluon.tabular import TabularPredictor
 from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
-from autogluon.tabular import TabularDataset, TabularPredictor
-from autogluon.tabular.models import XGBoostModel
-from sklearn.metrics import (
-    precision_score,
-    recall_score,
-    f1_score,
-    accuracy_score,
-)
-
-from sklearn.metrics import (
-    precision_score,
-    recall_score,
-    f1_score,
-    accuracy_score,
-)
+from sklearn.metrics import (accuracy_score, f1_score, precision_score,
+                             recall_score)
 
 
-def predict_level(data, item_id):
+def predict_level(data, item_id,output_path):
     # 删除所有包含 timestamp 的列
     data = data.drop(
         columns=[col for col in data.columns if "timestamp" in col.lower()]
@@ -68,17 +58,20 @@ def predict_level(data, item_id):
             "f1": f1,
         }
         scores.append(score)
-
+    # 判断目录是否存在
+    output_dir = output_path / str(item_id)
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
     # 将所有模型的指标保存为CSV文件
     pd.DataFrame(scores).to_csv(
-        f"results/{item_id}/level_classify_model_metrics.csv",
+        output_dir/"level_classify_model_metrics.csv",
         index=False,
     )
 
     # 生成并保存排行榜
     leaderboard = predictor.leaderboard(test_data)
     leaderboard.to_csv(
-        f"results/{item_id}/level_classify_leaderboard.csv", index=False
+        output_dir/"level_classify_leaderboard.csv", index=False
     )
 
     return train_data, val_data, test_data
@@ -87,19 +80,16 @@ def predict_level(data, item_id):
 def predict_float(
         data,
         item_id,
-        poi_df=pd.read_csv("results/poi.csv"),
+        poi_df=None,
         split_timestamp="2024-05-01 13:45:00",
         perdict_length=20,
+        output_path="",
 ):
-    # 创建结果目录
-    if not os.path.exists(f"results/{item_id}"):
-        os.makedirs(f"results/{item_id}")
-
-    # 分割训练和测试数据
+    output_dir = output_path / str(item_id)
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
     train_data = data[data["timestamp"] < split_timestamp]
     test_data = data
-
-    # 转换为时间序列数据格式
     train_data = TimeSeriesDataFrame.from_data_frame(
         train_data,
         id_column="item_id",
@@ -112,7 +102,6 @@ def predict_float(
         timestamp_column="timestamp",
         static_features_df=poi_df,
     )
-
     # 创建并训练预测器
     predictor = TimeSeriesPredictor(
         prediction_length=perdict_length,
@@ -123,11 +112,9 @@ def predict_float(
 
     # 获取并打印排行榜
     leaderboard = predictor.leaderboard()
-    print(leaderboard)
     best_score = leaderboard.iloc[0, 1]
-
     # 追加写入步长和最佳得分到txt文件
-    with open(f"results/{item_id}/best_score.txt", "a") as f:
+    with open(output_dir/"best_score.txt", "a") as f:
         f.write(
             f"{perdict_length},{str(best_score)}\n"
         )
@@ -138,13 +125,14 @@ def predict_float(
 def predict_congestion():
     mode = "global"
     source = "raw"
-    poi_df = pd.read_csv("results/poi.csv")
+    result_dir = Path(__file__).parents[2] / "results"
+    poi_df = pd.read_csv(result_dir/"poi.csv")
     split_timestamp = "2024-05-01 13:45:00"
     for perdict_length in range(1, 50):
         if source == "raw":
-            data = pd.read_csv("results/combined_data.csv")
+            data = pd.read_csv(result_dir/"combined_data.csv")
         elif source == "level":
-            data = pd.read_csv("results/labeled_congestion_data_final.csv")
+            data = pd.read_csv(result_dir/"labeled_congestion_data_final.csv")
             data.drop(columns=["overall_congestion"], inplace=True)
         else:
             raise ValueError("数据源必须是raw或level")
@@ -156,12 +144,13 @@ def predict_congestion():
                 poi_df=poi_df,
                 split_timestamp=split_timestamp,
                 perdict_length=perdict_length,
+                output_path=result_dir
             )
         elif mode == "local" and source == "raw":
             data = data.dropna()
             for item_id in [105]:  #
                 data = data[data["item_id"] == item_id]
-                predict_float(data, item_id)
+                predict_float(data, item_id,output_path=result_dir)
         elif mode == "global" and source == "level":
             data = data.dropna()
             predict_level(data, 100)

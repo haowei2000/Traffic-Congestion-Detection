@@ -1,8 +1,9 @@
+from pathlib import Path
 import pandas as pd
 from datetime import datetime, timedelta
 import jsonlines
 from joblib import Parallel, delayed
-
+from traffic.my_path import results_dir
 
 def parse_time_precision(time_str):
     # 获取最后一个字符作为时间单位
@@ -81,7 +82,7 @@ def assign_timestamps(df, start_time, sec1frame, set_accuracy="30S"):
     return df
 
 
-def get_time(video_path):
+def get_time(video_path: str):
     times = video_path.split("_")
     start_time = datetime.strptime(times[1], "%Y%m%d%H%M%S")
     end_time = datetime.strptime(times[2], "%Y%m%d%H%M%S")
@@ -107,7 +108,11 @@ def score_qkv(df, frames, video_path, distance, floor):
     return merged_df
 
 
-def read_json(json_path):
+def read_json(json_path:Path):
+    if json_path.is_file():
+        print(f"Reading {json_path}")
+    else:
+        raise FileNotFoundError(f"{json_path} not found or it's a directory.")
     frames, lane0, lane1, lane2, lane3 = [], [], [], [], []
     with jsonlines.open(json_path) as reader:
         for item in reader:
@@ -148,9 +153,9 @@ def process_lane(df, frames, config, id_to_label, lane_index):
         print(f"Processing {label} in lane {lane_index}")
         filtered_df = filter_label(df.copy(), id_to_label, label)
         result = score_qkv(
-            filtered_df,
-            frames,
-            config["input_video_path"],
+            df=filtered_df,
+            frames=frames,
+            video_path=config["input_video_path"],
             distance=config["distance"],
             floor=config["floor"],
         )
@@ -166,10 +171,10 @@ def process_lane(df, frames, config, id_to_label, lane_index):
 
 
 def get_traffic_infos(config):
-    frames, lane0, lane1, lane2, lane3 = read_json(config["json_path"])
-
+    frames, lane0, lane1, lane2, lane3 = read_json(results_dir/config["json_path"])
+    print(frames,lane0)
     # 读取 id_label_path 文件并检查列名
-    id_label_df = pd.read_csv(config["id_label_path"])
+    id_label_df = pd.read_csv(results_dir/config["id_label_path"])
     id_label_df.columns = ["id", "label"]
     id_to_label = id_label_df.set_index("id").to_dict()["label"]
     results = Parallel(n_jobs=4)(
@@ -177,5 +182,5 @@ def get_traffic_infos(config):
         for i, df in enumerate([lane0, lane1, lane2, lane3])
     )
     results_df = pd.concat(results, axis=1)
-    results_df.to_csv(config["time_series"], index=False)
+    results_df.to_csv(results_dir/config["time_series"], index=False)
     return results_df

@@ -1,11 +1,11 @@
 distance: 30
 port: 107
-id_label_path: results/id_label_107_0.csv
-input_video_path: video/transport/32.31.250.107/20240501_20240501114103_20240501135755_114103.mp4
-json_path: results/107_0.json
-list_pts_blue: [[25, 200], [60, 260], [390, 190], [330, 180]]
-list_pts_green:  [[620, 530], [200, 370], [540, 220], [725, 220]]
-list_pts_yellow: [[185, 366], [60, 260], [400, 200], [510, 220]]
+id_label_path: id_label_107_0.csv
+input_video_path: 32.31.250.107/20240501_20240501114103_20240501135755_114103.mp4
+json_path: 107_0.json
+list_pts_blue: [ [ 25, 200 ], [ 60, 260 ], [ 390, 190 ], [ 330, 180 ] ]
+list_pts_green: [ [ 620, 530 ], [ 200, 370 ], [ 540, 220 ], [ 725, 220 ] ]
+list_pts_yellow: [ [ 185, 366 ], [ 60, 260 ], [ 400, 200 ], [ 510, 220 ] ]
 offset: 0.7
 floor: 30S
-time_series: results/30S/time_series_107_0.csv
+time_series: 30S/time_series_107_0.csv

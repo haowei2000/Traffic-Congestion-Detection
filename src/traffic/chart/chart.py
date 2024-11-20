@@ -1,8 +1,10 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.signal import savgol_filter
-import numpy as np
+import logging
 import math
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.signal import savgol_filter
 
 
 def draw_hist(df, output_dir):
@@ -39,7 +41,7 @@ def draw_hist(df, output_dir):
         # 保存当前页面的图像
         plt.savefig(f'{output_dir}/hist_page_{page + 1}.png', dpi=300)
         plt.close(fig)  # 关闭当前图形，释放内存
-        print(f"已生成 {pages} 张A4大小的图片。")
+    logging.info(f"Saved {pages}pages of hist charts in {output_dir}.")
 
 
 def draw_line(df, output_dir):
@@ -135,7 +137,6 @@ def draw_line(df, output_dir):
         plt.subplots_adjust(top=0.9, bottom=0.1, hspace=0.3, wspace=0.3)
 
         # 保存为PNG文件
-        plt.savefig(f'{output_dir}/line_page_{page + 1}.png', dpi=300, bbox_inches='tight')
+        plt.savefig(f'{output_dir}/line_page_{page + 1}.pdf',  bbox_inches='tight')
         plt.close(fig)
-
-    print(f"Generated {total_pages} chart pages.")
+    logging.info(f"Saved {total_pages}pages of line charts in {output_dir}.")
