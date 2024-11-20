@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "traffic", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "3.8.*"
 matplotlib = ">=3.2.2"
 numpy = ">=1.18.5"
 opencv-python = ">=4.1.2"
@@ -33,7 +33,6 @@ detect = "cmd_line:detect"
 draw = "cmd_line:draw"
 calculate = "cmd_line:calculate"
 predict = "cmd_line:predict"
-
 
 [tool.ruff]
 line-length = 79

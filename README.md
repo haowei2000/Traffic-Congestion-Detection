@@ -286,6 +286,8 @@ The `global-mode` means that the simultaneous reference to the traffic road data
 
 [AlexLiu](https://github.com/MAXIMUM950814)
 
+[Fan Wang](https://github.com/kangyisheng123456)
+
 ## License
 This project is licensed under the MIT License. For more details, please refer to [LICENSE.txt](https://github.com/haowei2000/RBLU/blob/master/LICENSE.txt)
 
