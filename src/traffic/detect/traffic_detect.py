@@ -1,6 +1,6 @@
 import json
-from typing import Any, Dict, List, Set, Tuple
 import warnings
+from typing import Any, Dict, List, Set, Tuple
 
 import cv2
 import numpy as np
@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 import traffic.detect.tracker as tracker
 from traffic.detect.detector import Detector
-from traffic.my_path import results_dir,video_dir
+from traffic.my_path import results_dir, video_dir
 
 
 def _create_mask_image(config: Dict[str, Any]) -> np.ndarray:
