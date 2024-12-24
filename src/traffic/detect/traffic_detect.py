@@ -283,7 +283,7 @@ def _save_output_video(
     if "video_writer" not in locals():
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         video_writer = cv2.VideoWriter(
-            results_dir/config["output_video_path"], fourcc, 30, (960, 540)
+            results_dir / config["output_video_path"], fourcc, 30, (960, 540)
         )
     video_writer.write(output_image_frame)
 
@@ -349,8 +349,8 @@ def _save_id_label_dict(
     id_label_df = pd.DataFrame(
         list(id_label_dict.items()), columns=["track_id", "label"]
     )
-    output_path = results_dir/config["id_label_path"]
-    id_label_df.to_csv( output_path, index=False)
+    output_path = results_dir / config["id_label_path"]
+    id_label_df.to_csv(output_path, index=False)
 
 
 def detect_video(config: Dict[str, Any]) -> pd.DataFrame:
@@ -392,13 +392,13 @@ def detect_video(config: Dict[str, Any]) -> pd.DataFrame:
     draw_text_position = (int(960 * 0.01), int(540 * 0.05))
 
     detector = Detector()
-    video_path = video_dir/config["input_video_path"]
+    video_path = video_dir / config["input_video_path"]
     if video_path.is_file():
         capture = cv2.VideoCapture(video_path.as_posix())
     else:
         raise FileNotFoundError(f"Video file not found: {video_path}")
 
-    with open(results_dir/config["json_path"], "w", encoding="utf-8") as f:
+    with open(results_dir / config["json_path"], "w", encoding="utf-8") as f:
         id_label_dict = {}
         total_frames = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
         for _ in tqdm(range(total_frames), desc="Processing frames"):

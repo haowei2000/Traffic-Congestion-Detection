@@ -1,7 +1,7 @@
 """
 traffic_info.py
-Description: This module is used to calculate the QKV value of a vehicle in order to assess the flow, 
-density and speed of the vehicle. The formula is as follows: 
+Description: This module is used to calculate the QKV value of a vehicle in order to assess the flow,
+density and speed of the vehicle. The formula is as follows:
 Q=K⋅V
 """
 
