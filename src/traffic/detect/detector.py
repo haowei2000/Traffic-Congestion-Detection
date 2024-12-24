@@ -8,17 +8,16 @@ from utils.torch_utils import select_device
 
 
 class Detector:
-
     def __init__(self):
         # 初始化参数
         self.img_size = 640  # 输入图像大小
         self.threshold = 0.3  # 检测阈值
         self.stride = 1  # 步幅
 
-        self.weights = './weights/yolov5m.pt'  # 模型权重文件路径
+        self.weights = "./weights/yolov5m.pt"  # 模型权重文件路径
 
         # 选择设备（GPU或CPU）
-        self.device = '0' if torch.cuda.is_available() else 'cpu'
+        self.device = "0" if torch.cuda.is_available() else "cpu"
         self.device = select_device(self.device)
 
         # 加载模型
@@ -28,7 +27,9 @@ class Detector:
 
         self.m = model
         # 获取模型的类别名称
-        self.names = model.module.names if hasattr(model, 'module') else model.names
+        self.names = (
+            model.module.names if hasattr(model, "module") else model.names
+        )
 
     def preprocess(self, img):
         # 预处理输入图像
@@ -56,11 +57,20 @@ class Detector:
         for det in pred:
             if det is not None and len(det):
                 # 调整坐标到原始图像尺寸
-                det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
+                det[:, :4] = scale_coords(
+                    img.shape[2:], det[:, :4], im0.shape
+                ).round()
 
                 for *x, conf, cls_id in det:
                     lbl = self.names[int(cls_id)]  # 获取类别名称
-                    if lbl not in ['person', 'bicycle', 'car', 'motorcycle', 'bus', 'truck']:
+                    if lbl not in [
+                        "person",
+                        "bicycle",
+                        "car",
+                        "motorcycle",
+                        "bus",
+                        "truck",
+                    ]:
                         continue  # 过滤不需要的类别
                     x1, y1 = int(x[0]), int(x[1])
                     x2, y2 = int(x[2]), int(x[3])

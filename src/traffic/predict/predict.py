@@ -3,8 +3,12 @@ from pathlib import Path
 import pandas as pd
 from autogluon.tabular import TabularPredictor
 from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
-from sklearn.metrics import (accuracy_score, f1_score, precision_score,
-                             recall_score)
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 
 
 def predict_level(data, item_id, output_path):
